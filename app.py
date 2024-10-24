@@ -6,60 +6,21 @@ from llm_integration import generate_gpt4_code, generate_gemini_code, improve_gp
 from streamlit_navigation_bar import st_navbar
 
 # Set up page configuration
-st.set_page_config(page_title="MVP Creator", page_icon="$", layout="wide")
+st.set_page_config(page_title="MVP Creator", page_icon="🛠️", layout="wide")
 
-# Define pages and their respective URLs with icons
+# Define pages
 pages = ["Home", "Generate", "Preview", "Improvements", "Templates"]
 
-
-# Styles for the navigation bar
-styles = {
-    "nav": {
-        "background-color": "#2C3E50",  # Dark blue
-        "justify-content": "center",
-        "padding": "1px",
-        "border-radius": "5px",
-        "box-shadow": "0px 4px 8px rgba(0,0,0,0.2)"
-    },
-    "img": {
-        "padding-right": "14px",
-    },
-    "span": {
-        "color": "white",
-        "font-weight": "bold",
-        "padding": "14px",
-        "font-size": "18px"
-    },
-    "active": {
-        "background-color": "white",
-        "color": "#2C3E50",
-        "font-weight": "bold",
-        "padding": "14px",
-        "border-radius": "5px",
-        "box-shadow": "0px 4px 8px rgba(0,0,0,0.1)"
-    }
-}
-options = {
-    "show_menu": False,
-    "show_sidebar": True,
-}
-
 # Create the navigation bar
-page = st_navbar(
-    pages,
-   
-    styles=styles,
-    options=options,
-)
+page = st.sidebar.selectbox("Select a page", pages)
 
-
-# Initialize session state for generated code and improvements
+# Initialize session state for generated and improved code
 if 'generated_code' not in st.session_state:
     st.session_state.generated_code = ""
 if 'improved_code' not in st.session_state:
     st.session_state.improved_code = ""
 
-# Function to preview the generated or improved app using subprocess
+# Function to preview the generated app using subprocess
 def preview_generated_app(code_to_run):
     with tempfile.NamedTemporaryFile(delete=False, suffix=".py") as tmp_file:
         tmp_file.write(code_to_run.encode('utf-8'))
@@ -75,91 +36,20 @@ def preview_generated_app(code_to_run):
             st.text_area("App Output", output.decode())
         if error:
             st.text_area("App Error", error.decode())
-
     except Exception as e:
         st.error(f"Error executing app: {str(e)}")
     finally:
         os.remove(tmp_file_path)
 
-# Folder where templates are stored
-TEMPLATES_DIR = "./templates"
-
 # Function to list available templates
 def list_templates():
-    templates = [f for f in os.listdir(TEMPLATES_DIR) if f.endswith(".py")]
+    templates = [f for f in os.listdir("./templates") if f.endswith(".py")]
     return templates
 
-# Function to preview selected template
-def preview_template(template_name):
-    template_path = os.path.join(TEMPLATES_DIR, template_name)
-    
-    with open(template_path, "r") as file:
-        code = file.read()
-    
-    # Display the code of the template
-    st.code(code, language='python')
-    
-    # Option to run and preview the app
-    if st.button(f"Run {template_name}"):
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".py") as tmp_file:
-            tmp_file.write(code.encode('utf-8'))
-            tmp_file.flush()
-            tmp_file_path = tmp_file.name
-
-        try:
-            st.info(f"Running {template_name}...")
-            process = subprocess.Popen(["streamlit", "run", tmp_file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            output, error = process.communicate()
-
-            if output:
-                st.text_area("App Output", output.decode())
-            if error:
-                st.text_area("App Error", error.decode())
-        except Exception as e:
-            st.error(f"Error running template: {str(e)}")
-        finally:
-            os.remove(tmp_file_path)
-
-# Sidebar navigation
-with st.sidebar:
-    st.title("Navigation")
-    st.subheader("Sections")
-    selected_section = st.selectbox("Choose an option", ["Home", "Generate", "Preview", "Improvements", "Templates"])
-
-
-# Main content based on selected section
-if selected_section == "Home" or page == "Home":
+# Home Page
+if page == "Home":
     st.title("Welcome to the AI-Powered MVP/PoC App Creator")
-    
-    # CSS for modern, colorful blocks
-    st.markdown("""
-        <style>
-        .feature-box {
-            background: linear-gradient(135deg, #89CFF0, #4169E1); /* Gradient for a premium feel */
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-            color: white;
-            font-weight: bold;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        }
-        .header {
-            font-size: 24px;
-            font-family: 'Trebuchet MS', sans-serif;
-        }
-        .subheader {
-            font-size: 18px;
-            font-family: 'Verdana', sans-serif;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
-    st.markdown('<div class="feature-box"><h3 class="header">✨ Unlock the Magic of Creation!</h3></div>', unsafe_allow_html=True)
-    st.markdown("""
-        <div class="feature-box">
-            <p class="subheader">Welcome to your very own genie, a mystical AI-powered app creator! With just a flick of your wand (or a click of your mouse), you can transform your dreams into reality...</p>
-        </div>
-    """, unsafe_allow_html=True)
+    st.markdown("Create your app idea using AI models!")
 
 # Generate Page
 elif page == "Generate":
@@ -178,7 +68,7 @@ elif page == "Generate":
                 st.code(st.session_state.generated_code, language='python')
 
 # Preview Page
-elif selected_section == "Preview" or page == "Preview":
+elif page == "Preview":
     st.title("Preview Your App")
     code_to_preview = st.session_state.generated_code
     if code_to_preview:
@@ -188,7 +78,7 @@ elif selected_section == "Preview" or page == "Preview":
         st.warning("No code available. Please generate an app first.")
 
 # Improvements Page
-elif selected_section == "Improvements" or page == "Improvements":
+elif page == "Improvements":
     st.title("Request Improvements")
     improvement_request = st.text_area("What improvements do you want to request?", placeholder="Add error handling or change the layout...")
     
@@ -205,7 +95,7 @@ elif selected_section == "Improvements" or page == "Improvements":
             st.warning("Please describe the improvements you want.")
 
 # Templates Page
-elif selected_section == "Templates" or page == "Templates":
+elif page == "Templates":
     st.title("App Templates")
     templates = list_templates()
     selected_template = st.selectbox("Available Templates", templates)
@@ -218,7 +108,3 @@ elif selected_section == "Templates" or page == "Templates":
 
         if st.button("Run Template"):
             preview_generated_app(template_code)
-
-
-
-
