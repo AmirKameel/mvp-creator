@@ -10,7 +10,7 @@ st.set_page_config(page_title="MVP Creator", page_icon="$", layout="wide")
 
 # Define pages and their respective URLs with icons
 pages = ["Home", "Generate", "Preview", "Improvements", "Templates"]
-urls = {"A_Eye": "https://github.com/gabrieltempass/streamlit-navigation-bar"}
+
 
 # Styles for the navigation bar
 styles = {
@@ -47,7 +47,7 @@ options = {
 # Create the navigation bar
 page = st_navbar(
     pages,
-    urls=urls,
+   
     styles=styles,
     options=options,
 )
