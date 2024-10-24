@@ -2,4 +2,4 @@ openai
 toml
 google-generativeai
 streamlit
-streamlit_navigation_bar
+streamlit-navigation-bar
