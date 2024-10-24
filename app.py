@@ -9,8 +9,7 @@ from streamlit_navigation_bar import st_navbar
 st.set_page_config(page_title="MVP Creator", page_icon="$", layout="wide")
 
 # Define pages and their respective URLs with icons
-pages = [("🏠 Home", "Home"), ("⚙️ Generate", "Generate"), ("👁️ Preview", "Preview"), ("🔧 Improvements", "Improvements"), ("📂 Templates", "Templates"), ("A_Eye", "A_Eye")]
-urls = {"A_Eye": "https://github.com/gabrieltempass/streamlit-navigation-bar"}
+pages = ["Home", "Generate", "Preview", "Improvements", "Templates"]urls = {"A_Eye": "https://github.com/gabrieltempass/streamlit-navigation-bar"}
 
 # Styles for the navigation bar
 styles = {
