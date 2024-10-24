@@ -161,8 +161,9 @@ if selected_section == "Home" or page == "Home":
         </div>
     """, unsafe_allow_html=True)
 
-elif selected_section == "Generate App" or page == "Generate":
-    st.title("Step 1: Generate Your App")
+# Generate Page
+elif page == "Generate":
+    st.title("Generate Your App")
     app_idea = st.text_area("Describe your app idea", placeholder="I want an app for a custom GPT on my data")
     llm_model = st.selectbox("Choose LLM Model", ["GPT-4 (OpenAI)", "Gemini (Google)"])
 
@@ -176,74 +177,47 @@ elif selected_section == "Generate App" or page == "Generate":
                 st.success("App successfully generated!")
                 st.code(st.session_state.generated_code, language='python')
 
-elif selected_section == "Preview" or page == "Preview":
+# Preview Page
+elif page == "Preview":
     st.title("Preview Your App")
-    code_to_preview = st.session_state.improved_code if st.session_state.improved_code else st.session_state.generated_code
+    code_to_preview = st.session_state.generated_code
     if code_to_preview:
-        st.download_button("Download App Code", code_to_preview, file_name="app_code.py")
         if st.button("Preview App"):
             preview_generated_app(code_to_preview)
     else:
-        st.warning("No code available. Please generate an app or apply improvements first.")
+        st.warning("No code available. Please generate an app first.")
 
-elif selected_section == "Improvements" or page == "Improvements":
+# Improvements Page
+elif page == "Improvements":
     st.title("Request Improvements")
-    llm_model = st.selectbox("Choose LLM Model", ["GPT-4 (OpenAI)", "Gemini (Google)"])
     improvement_request = st.text_area("What improvements do you want to request?", placeholder="Add error handling or change the layout...")
-
+    
     if st.button("Apply Improvements"):
         if improvement_request:
             with st.spinner("Applying improvements..."):
-                if llm_model == "GPT-4 (OpenAI)":
+                if st.session_state.generated_code:
                     st.session_state.improved_code = improve_gpt4_code(st.session_state.generated_code, improvement_request)
-                elif llm_model == "Gemini (Google)":
-                    st.session_state.improved_code = improve_gemini_code(st.session_state.generated_code, improvement_request)
-                st.success("Improvements applied!")
-                st.code(st.session_state.improved_code, language='python')
-                st.download_button("Download Improved App Code", st.session_state.improved_code, file_name="improved_app.py")
+                    st.success("Improvements applied!")
+                    st.code(st.session_state.improved_code, language='python')
+                else:
+                    st.warning("No code available to improve.")
         else:
             st.warning("Please describe the improvements you want.")
 
-# Your main code
-elif selected_section == "Templates" or page == "Templates":
+# Templates Page
+elif page == "Templates":
     st.title("App Templates")
     templates = list_templates()
+    selected_template = st.selectbox("Available Templates", templates)
 
-    if templates:
-        template_name = st.selectbox("Available Templates", templates)
-        if template_name:
-            st.subheader(f"Previewing Template: {template_name}")
-            preview_template(template_name)
+    if selected_template:
+        template_path = os.path.join("./templates", selected_template)
+        with open(template_path, "r") as file:
+            template_code = file.read()
+            st.code(template_code, language='python')
 
-            # Read and display the original template code
-            with open(os.path.join(TEMPLATES_DIR, template_name), "r") as file:
-                original_code = file.read()
-
-            # Display the original code of the selected template
-            # st.code(original_code, language='python')
-
-            st.write("### Suggest Improvements")
-            improvements = st.text_area("Describe your improvements for this app", placeholder="E.g., Add a new feature or improve UI...")
-
-            if st.button("Submit Improvements"):
-                if improvements:
-                    # Use GPT-4 to improve the code based on user input
-                    with st.spinner("Applying improvements..."):
-                        improved_code = improve_gpt4_code(original_code, improvements)
-
-                    # Store the improved code in session state
-                    st.session_state.improved_code = improved_code
-
-                    st.success("Improvements applied! Here is the improved code:")
-                    st.code(improved_code, language='python')
-
-            # Option to preview the improved app (only if improved code is available)
-            if 'improved_code' in st.session_state:
-                if st.button("Preview Improved App"):
-                    preview_generated_app(st.session_state.improved_code)
-
-    else:
-        st.warning("No templates found.")
+        if st.button("Run Template"):
+            preview_generated_app(template_code)
 
 
 
