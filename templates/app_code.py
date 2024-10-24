@@ -3,10 +3,8 @@ import openai
 import toml
 
 # Load the secrets from the toml file
-secrets = toml.load('secrets.toml')
-
-# Create the OpenAI client using the API key from secrets.toml
-client = openai.OpenAI(api_key=secrets['openai']['api_key'])
+openai_api_key = st.secrets["openai"]["api_key"]
+client = openai.OpenAI(api_key=openai_api_key)
 
 # Streamlit app setup
 st.set_page_config(
