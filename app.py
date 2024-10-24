@@ -46,7 +46,7 @@ options = {
 
 # Create the navigation bar
 page = st_navbar(
-    [name for name, label in pages],
+    pages,
     urls=urls,
     styles=styles,
     options=options,
