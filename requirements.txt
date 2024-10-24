@@ -1,0 +1,6 @@
+openai
+toml
+google-generativeai
+streamlit
+llm_integration
+streamlit_navigation_bar
