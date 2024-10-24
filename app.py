@@ -178,7 +178,7 @@ elif page == "Generate":
                 st.code(st.session_state.generated_code, language='python')
 
 # Preview Page
-elif page == "Preview":
+elif selected_section == "Preview" or page == "Preview":
     st.title("Preview Your App")
     code_to_preview = st.session_state.generated_code
     if code_to_preview:
@@ -188,7 +188,7 @@ elif page == "Preview":
         st.warning("No code available. Please generate an app first.")
 
 # Improvements Page
-elif page == "Improvements":
+elif selected_section == "Improvements" or page == "Improvements":
     st.title("Request Improvements")
     improvement_request = st.text_area("What improvements do you want to request?", placeholder="Add error handling or change the layout...")
     
@@ -205,7 +205,7 @@ elif page == "Improvements":
             st.warning("Please describe the improvements you want.")
 
 # Templates Page
-elif page == "Templates":
+elif selected_section == "Templates" or page == "Templates":
     st.title("App Templates")
     templates = list_templates()
     selected_template = st.selectbox("Available Templates", templates)
