@@ -124,7 +124,7 @@ def preview_template(template_name):
 with st.sidebar:
     st.title("Navigation")
     st.subheader("Sections")
-    selected_section = st.selectbox("Choose an option", ["Home", "Generate App", "Preview", "Improvements", "Templates"])
+    selected_section = st.selectbox("Choose an option", ["Home", "Generate", "Preview", "Improvements", "Templates"])
 
 
 # Main content based on selected section
