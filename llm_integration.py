@@ -4,6 +4,7 @@ import toml
 import openai
 import google.generativeai as genai
 import os
+import streamlit as st
 
 def generate_gpt4_code(user_idea):
     openai_api_key = st.secrets["openai"]["api_key"]
