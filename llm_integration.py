@@ -6,6 +6,8 @@ import google.generativeai as genai
 import os
 
 def generate_gpt4_code(user_idea):
+    openai_api_key = st.secrets["openai"]["api_key"]
+    client = openai.OpenAI(api_key=openai_api_key)
 
     # Prepare the system message to instruct GPT to generate Streamlit apps with LLM integration
     system_message = """
@@ -14,9 +16,10 @@ def generate_gpt4_code(user_idea):
     Below are examples of how to use different LLMs in the generated code.
     Do not include markdown "```" or "```python" at the start or end. 
     if the llm selected is gpt use the same structure as i will send like this (client.chat.completions.create) and the model gpt-4o then return response.choices[0].message.content
-    read the openai api key from secrets.toml 
-    # Load the secrets from the toml file
-    secrets = toml.load('secrets.toml')
+    read the openai api key exact like this  
+    # Load the secrets 
+    openai_api_key = st.secrets["openai"]["api_key"]
+    client = openai.OpenAI(api_key=openai_api_key)
 
     # Create the OpenAI client using the API key from secrets.toml
     client = openai.OpenAI(api_key=secrets['openai']['api_key'])
@@ -38,7 +41,7 @@ def generate_gpt4_code(user_idea):
     ]
 
     # OpenAI API request for chat completion
-    response = openai.chat.completions.create(
+    response = client.chat.completions.create(
         model='gpt-4o',  # Specify the model (GPT-4 in this case, or 'gpt-3.5-turbo' if needed)
         messages=messages,
         max_tokens=4000,  # Adjust as per requirements
@@ -69,6 +72,8 @@ def generate_gemini_code(user_idea):
 
 # Function to apply improvements to generated code based on user feedback
 def improve_gpt4_code(generated_code, improvement_request):
+    openai_api_key = st.secrets["openai"]["api_key"]
+    client = openai.OpenAI(api_key=openai_api_key)
 
     system_message = f"""
     You are an expert in Python, Streamlit integration. 
@@ -99,7 +104,7 @@ def improve_gpt4_code(generated_code, improvement_request):
 
 
     # Send request to LLM for code improvement
-    response = openai.chat.completions.create(
+    response = client.chat.completions.create(
         model="gpt-4o",  # Adjust for different models as needed
         messages=messages,
         max_tokens=4000
